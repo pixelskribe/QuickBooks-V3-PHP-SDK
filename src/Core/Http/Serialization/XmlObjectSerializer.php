@@ -102,9 +102,9 @@ class XmlObjectSerializer extends IEntitySerializer
 			}
 		}
 		/* #### original code #### */
-		//		$bind = new Bind(CoreConstants::PHP_CLASS_PREFIX);
-		//  	$bind->overrideAsSingleNamespace = 'http://schema.intuit.com/finance/v3';
-		//		$bind->bindXml($xmlStr, $phpObj);
+		//	$bind = new Bind(CoreConstants::PHP_CLASS_PREFIX);
+		// 	$bind->overrideAsSingleNamespace = 'http://schema.intuit.com/finance/v3';
+		//	$bind->bindXml($xmlStr, $phpObj);
 
 		return $phpObj;
 	}
@@ -231,20 +231,20 @@ class XmlObjectSerializer extends IEntitySerializer
 	 * DeSerializes the specified action entity type.
 	 * @param message The type to be  serialize to
 	 * @param bLimitToOne Limit to parsing just one response element
-	 * @return object Returns the de serialized object.
+	 * @return array Returns an array of objects.
 	 */
 	public function Deserialize($message, $bLimitToOne = false)
 	{
 		if (!$message) {
 			return null;
 		}
-
 		$resultObject = null;
 		$resultObjects = null;
 
 		$responseXmlObj = simplexml_load_string($message);
 
 		foreach ($responseXmlObj as $oneXmlObj) {
+
 			$oneXmlElementName = (string)$oneXmlObj->getName();
 			if ('Fault' == $oneXmlElementName) {
 				return null;
@@ -260,10 +260,11 @@ class XmlObjectSerializer extends IEntitySerializer
 				break;
 			}
 		}
+
 		if ($bLimitToOne) {
-			return $resultObject;
+			return ['resultAttrs'=>$responseXmlObj->attributes(), 'resultData' => $resultObject];
 		} else {
-			return $resultObjects;
+			return ['resultAttrs'=>$responseXmlObj->attributes(), 'resultData' => $resultObjects];
 		}
 	}
 
